@@ -19,6 +19,7 @@ package instances
 
 import org.specs2.mutable._
 import scalaz._, Scalaz._
+import scalaz.syntax.equal
 import TListK.:::
 
 object EqualSpecs extends Specification {

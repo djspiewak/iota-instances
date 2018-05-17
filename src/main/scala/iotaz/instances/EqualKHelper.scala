@@ -19,9 +19,12 @@ package instances
 
 import scalaz.Equal
 import TListK.:::
+import iotaz.CopK
+
+import scala.language.higherKinds
 
 sealed trait EqualKHelper[LL <: TListK, A] {
-  def materialize: Equal[CopK[LL, A]]
+  def materialize(offset: Int): Equal[CopK[LL, A]]
 }
 
 object EqualKHelper {
@@ -29,7 +32,7 @@ object EqualKHelper {
   implicit def base[F[_], A](implicit eql: Equal[F[A]]): EqualKHelper[F ::: TNilK, A] = new EqualKHelper[F ::: TNilK, A] {
     type CP[B] = CopK[F ::: TNilK, B]
 
-    def materialize: Equal[CP[A]] = {
+    def materialize(offset: Int): Equal[CP[A]] = {
       val FA = CopK.Inject[F, CP]
 
       Equal equalBy {
@@ -41,14 +44,21 @@ object EqualKHelper {
   implicit def induct[F[_], A, LL <: TListK](implicit eql: Equal[F[A]], LL: EqualKHelper[LL, A]): EqualKHelper[F ::: LL, A] = new EqualKHelper[F ::: LL, A] {
     type CP[B] = CopK[F ::: LL, B]
 
-    def materialize: Equal[CP[A]] = {
-      val FA = CopK.Inject.injectFromInjectL[F, F ::: LL](
-        CopK.InjectL.makeInjectL[F, F ::: LL](new TListK.Pos[F ::: LL, F] { val index = 0 }))
+    def materialize(offset: Int): Equal[CP[A]] = {
+      val FA = mkInject[F, F ::: LL](0)
 
       Equal equal {
         case (FA(left), FA(right)) => eql.equal(left, right)
-        case (left, right) => LL.materialize.equal(left.asInstanceOf[CopK[LL, A]], right.asInstanceOf[CopK[LL, A]])
+        case (left, right) => LL.materialize(0).equal(left.asInstanceOf[CopK[LL, A]], right.asInstanceOf[CopK[LL, A]])
       }
     }
+  }
+
+  private def mkInject[F[_], LL <: TListK](i: Int): CopK.Inject[F, CopK[LL, ?]] = {
+    CopK.Inject.injectFromInjectL[F, LL](
+      CopK.InjectL.makeInjectL[F, LL](
+        new TListK.Pos[LL, F] { val index: Int = i }
+      )
+    )
   }
 }

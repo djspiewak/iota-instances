@@ -21,5 +21,5 @@ import scalaz.Equal
 package object instances {
 
   implicit def equalForCopK[LL <: TListK, A](implicit EH: EqualKHelper[LL, A]): Equal[CopK[LL, A]] =
-    EH.materialize
+    EH.materialize(0)
 }
