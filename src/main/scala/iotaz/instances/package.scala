@@ -16,10 +16,23 @@
 
 package iotaz
 
-import scalaz.Equal
+import scalaz.{ Equal, Traverse }
+
+import scala.language.higherKinds
 
 package object instances {
 
+  private[instances] def mkInject[F[_], LL <: TListK](i: Int): CopK.Inject[F, CopK[LL, ?]] = {
+    CopK.Inject.injectFromInjectL[F, LL](
+      CopK.InjectL.makeInjectL[F, LL](
+        new TListK.Pos[LL, F] { val index: Int = i }
+      )
+    )
+  }
+
   implicit def equalForCopK[LL <: TListK, A](implicit EH: EqualKHelper[LL, A]): Equal[CopK[LL, A]] =
     EH.materialize(0)
+
+  implicit def traverseForCopK[LL <: TListK](implicit TM: TraverseMaterializer[LL]): Traverse[CopK[LL, ?]] =
+    TM.materialize(0)
 }

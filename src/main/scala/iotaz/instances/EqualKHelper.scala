@@ -55,11 +55,4 @@ object EqualKHelper {
     }
   }
 
-  private def mkInject[F[_], LL <: TListK](i: Int): CopK.Inject[F, CopK[LL, ?]] = {
-    CopK.Inject.injectFromInjectL[F, LL](
-      CopK.InjectL.makeInjectL[F, LL](
-        new TListK.Pos[LL, F] { val index: Int = i }
-      )
-    )
-  }
 }
