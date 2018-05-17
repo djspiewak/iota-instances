@@ -30,11 +30,7 @@ object TraverseMaterializer {
 
   implicit val base: TraverseMaterializer[TNilK] = new TraverseMaterializer[TNilK] {
     override def materialize(offset: Int): Traverse[CopK[TNilK, ?]] = {
-      new Traverse[CopK[TNilK, ?]] {
-        override def traverseImpl[G[_], A, B](cfa: CopK[TNilK, A])(f: A => G[B])(implicit A: Applicative[G]): G[CopK[TNilK, B]] = {
-          ???
-        }
-      }
+      ???
     }
   }
 
