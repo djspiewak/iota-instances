@@ -1,4 +1,4 @@
-# iota-instances [![Build Status](https://travis-ci.org/djspiewak/iota-instances.svg?branch=master)](https://travis-ci.org/djspiewak/iota-instances)
+# iota-instances [![Build Status](https://travis-ci.org/djspiewak/iota-instances.svg?branch=master)](https://travis-ci.org/djspiewak/iota-instances) [![Download](https://api.bintray.com/packages/djspiewak/maven/iota-instances/images/download.svg)](https://bintray.com/djspiewak/maven/iota-instances/_latestVersion)
 
 ```sbt
 resolvers += Resolver.bintrayRepo("djspiewak", "maven")
