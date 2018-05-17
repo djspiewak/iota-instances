@@ -19,7 +19,6 @@ package instances
 
 import org.specs2.mutable._
 import scalaz._, Scalaz._
-import scalaz.syntax.equal
 import TListK.:::
 
 object EqualSpecs extends Specification {
@@ -63,11 +62,11 @@ object EqualSpecs extends Specification {
       (test1 === test2) must beFalse
     }
 
-    /*"materialize both components match false" in {
+    "materialize both components match false" in {
       val test1 = LI(List(1, 2, 3, 4))
-      val test2 = OI(Some("other-things"))
+      val test2 = OI(Some(123))
 
       (test1 === test2) must beFalse
-    }*/
+    }
   }
 }

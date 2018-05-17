@@ -33,10 +33,11 @@ object EqualKHelper {
     type CP[B] = CopK[F ::: TNilK, B]
 
     def materialize(offset: Int): Equal[CP[A]] = {
-      val FA = CopK.Inject[F, CP]
+      val FA = mkInject[F, F ::: TNilK](offset)
 
-      Equal equalBy {
-        case FA(fa) => fa
+      Equal equal {
+        case (FA(left), FA(right)) => eql.equal(left, right)
+        case _ => false
       }
     }
   }
@@ -45,11 +46,11 @@ object EqualKHelper {
     type CP[B] = CopK[F ::: LL, B]
 
     def materialize(offset: Int): Equal[CP[A]] = {
-      val FA = mkInject[F, F ::: LL](0)
+      val FA = mkInject[F, F ::: LL](offset)
 
       Equal equal {
         case (FA(left), FA(right)) => eql.equal(left, right)
-        case (left, right) => LL.materialize(0).equal(left.asInstanceOf[CopK[LL, A]], right.asInstanceOf[CopK[LL, A]])
+        case (left, right) => LL.materialize(offset + 1).equal(left.asInstanceOf[CopK[LL, A]], right.asInstanceOf[CopK[LL, A]])
       }
     }
   }
