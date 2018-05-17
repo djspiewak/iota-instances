@@ -29,16 +29,9 @@ sealed trait EqualKHelper[LL <: TListK, A] {
 
 object EqualKHelper {
 
-  implicit def base[F[_], A](implicit eql: Equal[F[A]]): EqualKHelper[F ::: TNilK, A] = new EqualKHelper[F ::: TNilK, A] {
-    type CP[B] = CopK[F ::: TNilK, B]
-
-    def materialize(offset: Int): Equal[CP[A]] = {
-      val FA = mkInject[F, F ::: TNilK](offset)
-
-      Equal equal {
-        case (FA(left), FA(right)) => eql.equal(left, right)
-        case _ => false
-      }
+  implicit def base[A]: EqualKHelper[TNilK, A] = new EqualKHelper[TNilK, A] {
+    def materialize(offset: Int): Equal[CopK[TNilK, A]] = {
+      Equal equal { (_, _) => false }
     }
   }
 
