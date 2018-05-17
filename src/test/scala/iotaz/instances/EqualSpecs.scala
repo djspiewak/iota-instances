@@ -24,10 +24,12 @@ import TListK.:::
 object EqualSpecs extends Specification {
 
   "equal materialization" should {
-    type CP[A] = CopK[List ::: Option ::: TNilK, A]
+    type CP[A] = CopK[List ::: Option ::: Vector ::: (Int \/ ?) ::: TNilK, A]
 
     val LI = CopK.Inject[List, CP]
     val OI = CopK.Inject[Option, CP]
+    val VI = CopK.Inject[Vector, CP]
+    val EI = CopK.Inject[Int \/ ?, CP]
 
     "materialize first component match true" in {
       val test1 = LI(List(1, 2, 3))
@@ -55,18 +57,34 @@ object EqualSpecs extends Specification {
       (test1 === test2) must beFalse
     }
 
-    "materialize second component match false" in {
-      val test1 = OI(Some("forty-two"))
-      val test2 = OI(Some("other-things"))
-
-      (test1 === test2) must beFalse
-    }
-
     "materialize both components match false" in {
       val test1 = LI(List(1, 2, 3, 4))
       val test2 = OI(Some(123))
 
       (test1 === test2) must beFalse
     }
+
+    "materialize last component match true" in {
+      val test1 = EI(":)".right[Int])
+      val test2 = EI(":)".right[Int])
+
+      (test1 === test2) must beTrue
+    }
+
+    "materialize last component match false" in {
+      val test1 = EI(":)".right[Int])
+      val test2 = EI(7.left[String])
+
+      (test1 === test2) must beFalse
+    }
+
+    "materialize last and second to last component match false" in {
+      val test1 = EI(":)".right[Int])
+      val test2 = VI(Vector(":D", ":DD"))
+
+      (test1 === test2) must beFalse
+    }
+
   }
+
 }
